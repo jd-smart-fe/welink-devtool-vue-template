@@ -18,17 +18,10 @@ const env = require('../config/prod.env')
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
   module: {
-    rules: [
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'postcss-loader',
-          // 'sass-loader',
-        ],
-      }
-    ]
+    rules: utils.styleLoaders({
+      sourceMap: config.build.productionSourceMap,
+      extract: true
+    })
   },
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
