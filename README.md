@@ -19,4 +19,8 @@ npm run build --report
 ```
 ### 微联sdk
 
-不用引用微联sdk，`npm run build` 的时候会自动引用。
+**不用引用微联sdk，`npm run build` 的时候会自动引用。**
+
+### welinkconfig.json
+
+**不要修改 `staticPath` 参数**
