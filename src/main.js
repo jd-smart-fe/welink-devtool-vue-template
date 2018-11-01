@@ -9,6 +9,10 @@ if (process.env.NODE_ENV === 'development') {
   window.JDSMART = jdsmart;
 }
 
+import './libs/SmartSDKUtils';
+
+window.SmartSDK = SmartSDK;
+
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
