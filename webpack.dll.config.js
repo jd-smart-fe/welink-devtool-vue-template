@@ -1,4 +1,4 @@
-odule.exports = {
+module.exports = {
   entry: {
     lib: ['vue', 'vuex', 'vue-resource', 'vue-router']
   },
