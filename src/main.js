@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
   window.JDSMART = jdsmart;
 }
 
-import './libs/SmartSDKUtils';
+import SmartSDK from './libs/SmartSDKUtils';
 
 window.SmartSDK = SmartSDK;
 
