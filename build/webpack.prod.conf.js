@@ -11,14 +11,18 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const CopyWebpackPlugin = require('copy-webpack-plugin')
+// const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 const env = require('../config/prod.env')
 const InsertJavaScriptBridgePlugin = require('../InsertJavaScriptBridgePlugin');
 
 const webpackConfig = merge(baseWebpackConfig, {
   mode: 'production',
+  performance: {
+    hints: false
+  },
   module: {
     rules: utils.styleLoaders({
       sourceMap: config.build.productionSourceMap,
@@ -30,6 +34,38 @@ const webpackConfig = merge(baseWebpackConfig, {
     path: config.build.assetsRoot,
     filename: utils.assetsPath('js/[name].[chunkhash].js'),
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+  },
+  optimization: {
+    providedExports: true,
+    usedExports: true,
+    sideEffects: true,
+    concatenateModules: true,
+    noEmitOnErrors: true,
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          // test: /[\\/]node_modules[\\/]/,
+          test (module) {
+            // any required modules inside node_modules are extracted to vendor
+            return (
+              module.resource &&
+              /\.js$/.test(module.resource) &&
+              module.resource.indexOf(
+                path.join(__dirname, '../node_modules')
+              ) === 0
+            )
+          },
+          name: "vendors",
+          chunks: "all",
+          filename: utils.assetsPath('js/[name].[chunkhash].js'),
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      },
+    },
   },
   plugins: [
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
@@ -123,14 +159,15 @@ const webpackConfig = merge(baseWebpackConfig, {
     //   }
     // ])
     new VueLoaderPlugin(),
-    new webpack.DllReferencePlugin({
-      context: __dirname,
-      manifest: require('./vendor-manifest.json')
-    }),
-    new CopyWebpackPlugin([
-      { from: 'static', to: 'static' }
-    ]),
-    new CleanWebpackPlugin(['dist'])
+    // new webpack.DllReferencePlugin({
+    //   context: __dirname,
+    //   manifest: require('./vendor-manifest.json')
+    // }),
+    // new CopyWebpackPlugin([
+    //   { from: 'static', to: 'static' }
+    // ]),
+    // new CleanWebpackPlugin(['dist'])
+    // new BundleAnalyzerPlugin(),
   ],
 })
 
@@ -150,11 +187,6 @@ if (config.build.productionGzip) {
       minRatio: 0.8
     })
   )
-}
-
-if (config.build.bundleAnalyzerReport) {
-  const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-  webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
 
 module.exports = webpackConfig
